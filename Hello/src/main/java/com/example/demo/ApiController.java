@@ -8,9 +8,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.List;
+
+import javax.websocket.server.PathParam;
 
 import org.apache.tomcat.util.json.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,59 +32,43 @@ import io.swagger.models.Model;
 @RestController
 public class ApiController {
 	
-//	@GetMapping("/api")
-//	public String projectInfo() {
-//		return "project";
-//	}
-//	@GetMapping("api")
-//	public String api(Model model) {
-//		(String)model.addAttribute
-//	}
-
+	@Autowired
+	ListDTO list;
 
 	@GetMapping("/find")
-	
-	public String callapihttp()throws IOException {
-		StringBuilder result = new StringBuilder();
+	public List<ListDTO> callapihttp(
+			@RequestParam String airlineID, 
+			@RequestParam String airlineNm)  {
 		
-//	StringBuffer result = new StringBuffer();
-//		
+			System.out.println("airlineId = " + airlineID);
+			System.out.println("airlineNm = " + airlineNm);
+		
+		StringBuilder result = new StringBuilder();
+
     try {
     	// 1. URL을 만들기 위한 StringBuilder
         String urlBuilder = "http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getAirmanList?" +
         			"serviceKey=s%2FJMx%2B0d4t%2Ffp3JEpST7EJe7bhAJ7Tvuh%2FXkexlOqbuUEzEZxeUBH2UZ%2BXHjwDN8%2Fywz%2F9a%2BFGIUE6k%2FqcmZTg%3D%3D"+
+        			"&airlineId=" + airlineID +
+        			"&airlineNm=" + airlineNm +
         			"&_type=json";
         
-//                			"&numOfRows=10"+
-//        			"&pageNo=1"+
-//        			"&depAirportId=NAARKJJ"+
-//        			"&arrAirportId=NAARKPC"+
-//        			"&depPlandTime=20201201"+
-//        			"&airlineId=AAR"+
-        
-//        String urlBuilder2 = "serviceKey=s%2FJMx%2B0d4t%2Ffp3JEpST7EJe7bhAJ7Tvuh%2FXkexlOqbuUEzEZxeUBH2UZ%2BXHjwDN8%2Fywz%2F9a%2BFGIUE6k%2FqcmZTg%3D%3D&depAirportId=NAARKJJ&arrAirportId=NAARKPC&depPlandTime=20211201&airlineId=AAR&numOfRows=10&pageNo=1&_type=json"
-        		
-        		; /*URL*/
-        // 2. 오픈 API의요청 규격에 맞는 파라미터 생성, 발급받은 인증키
-//        urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "s%2FJMx%2B0d4t%2Ffp3JEpST7EJe7bhAJ7Tvuh%2FXkexlOqbuUEzEZxeUBH2UZ%2BXHjwDN8%2Fywz%2F9a%2BFGIUE6k%2FqcmZTg%3D%3D"); /*Service Key*/
-//        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
-//        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지 번호*/
-//        urlBuilder.append("&" + URLEncoder.encode("depAirportId","UTF-8") + "=" + URLEncoder.encode("NAARKJJ", "UTF-8")); /*출발공항ID*/
-//        urlBuilder.append("&" + URLEncoder.encode("arrAirportId","UTF-8") + "=" + URLEncoder.encode("NAARKPC", "UTF-8")); /*도착공항ID*/
-//        urlBuilder.append("&" + URLEncoder.encode("depPlandTime","UTF-8") + "=" + URLEncoder.encode("20201201", "UTF-8")); /*출발일*/
-//        urlBuilder.append("&" + URLEncoder.encode("airlineId","UTF-8") + "=" + URLEncoder.encode("AAR", "UTF-8")); /*항공사ID*/
         // 3. URL 객체 생성
         URL url = new URL(urlBuilder);
+        System.out.println("요청URL = " + urlBuilder);
+
         // 4. 요청하고자 하는 URL과 통신하기 위한 Connection 객체 생성
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
              
         // 5. 통신을 위한 메소드 SET
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-type", "application/json");
         
         BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        System.out.println("Response code: " + conn.getResponseCode());
         
         String returnLine;
-//        result.append("<xmp>");
+
         while((returnLine = br.readLine()) !=null) {
         	result.append(returnLine);
         }
@@ -88,8 +77,11 @@ public class ApiController {
     	e.printStackTrace();
     }
     System.out.println("연결됨");
-    return result+"";
+    
+    return List;
 	}
+	
+	
 	
 	@Configuration
 	public class WebConfig implements WebMvcConfigurer {
