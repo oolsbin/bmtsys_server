@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -62,27 +63,33 @@ public class ApiController {
 //	
 //	
 	
+	
+	
 	@GetMapping("/find")
+//>	@Operation(summary = "화면", description = "화면을 출력합니다.")
 	public ResponseEntity<ListVO> callapihttp(
-			@RequestParam  String airlineID, 
-			@RequestParam String airlineNm
-			)  {
+			@RequestParam (value="airlineId", required=false)String airlineId, 
+			@RequestParam (value="airlineNm", required=false)String airlineNm
+			) throws IOException {
+		StringBuilder result = new StringBuilder();
 		
+//		System.out.println(airlineId);
+//		System.out.println(airlineNm);
 //		List<ListVO> vo = 
 		
-		ResponseEntity<ListVO> result = null;
+		ResponseEntity<ListVO> resultVO = null;
 		
-		Map<String, Object> map = new HashMap<>();
+//		Map<String, Object> map = new HashMap<>();
 		
-		map.put("airlineID", airlineID);
-		map.put("airlineNm", airlineNm);
+//		map.put("airlineID", airlineId);
+//		map.put("airlineNm", airlineNm);
 		
 //		result.put("airlineId", result.get);
 //		result.put("airlineNm", airlineNm);
 		
 		String response = "";
 		
-			System.out.println("airlineId = " + airlineID);
+			System.out.println("airlineId = " + airlineId);
 			System.out.println("airlineNm = " + airlineNm);
 		
 
@@ -90,7 +97,7 @@ public class ApiController {
     	// 1. URL을 만들기 위한 StringBuilder
         String urlBuilder = "http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getAirmanList?" +
         			"serviceKey=s%2FJMx%2B0d4t%2Ffp3JEpST7EJe7bhAJ7Tvuh%2FXkexlOqbuUEzEZxeUBH2UZ%2BXHjwDN8%2Fywz%2F9a%2BFGIUE6k%2FqcmZTg%3D%3D"+
-        			"&airlineId=" + airlineID +
+        			"&airlineId=" + airlineId +
         			"&airlineNm=" + airlineNm +
         			"&_type=json";
         
@@ -128,8 +135,10 @@ public class ApiController {
     }
     System.out.println("연결됨");
     
-    return result;
+    return resultVO;
 	}
+	
+	
 	
 	
 	
