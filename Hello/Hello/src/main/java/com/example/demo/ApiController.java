@@ -26,24 +26,25 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import io.swagger.models.Model;
+
 
 
 @RestController
 public class ApiController {
 	
 	@Autowired
-	ListDTO list;
+	private ListDTO list;
 
-	@GetMapping("/find")
-	public List<ListDTO> callapihttp(
+	@GetMapping(value = "/list.cu", produces = "text/html;charset=utf-8")
+	public String callapihttp(
 			@RequestParam String airlineID, 
 			@RequestParam String airlineNm)  {
 		
 			System.out.println("airlineId = " + airlineID);
 			System.out.println("airlineNm = " + airlineNm);
 		
-		StringBuilder result = new StringBuilder();
+		
+		String response = "";
 
     try {
     	// 1. URL을 만들기 위한 StringBuilder
@@ -64,21 +65,30 @@ public class ApiController {
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
         
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-        System.out.println("Response code: " + conn.getResponseCode());
+        int responseCode = conn.getResponseCode();
+        BufferedReader br;
+        System.out.print("responseCode="+responseCode);
         
+        if(responseCode==200) {
+        	br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        } else {
+        	br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        }
+       
         String returnLine;
-
+        StringBuilder result = new StringBuilder();
         while((returnLine = br.readLine()) !=null) {
         	result.append(returnLine);
         }
-        conn.disconnect();
+//        conn.disconnect();
+        br.close();
+		response = result.toString();
     }catch(Exception e) {
-    	e.printStackTrace();
+    	System.out.println(e);
     }
     System.out.println("연결됨");
     
-    return List;
+    return response;
 	}
 	
 	
